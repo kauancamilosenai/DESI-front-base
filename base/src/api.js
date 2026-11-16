@@ -1,14 +1,15 @@
 // Adaptador do front: DEMO primeiro. Não cria servidor nem banco.
 // Na API real confira /api-docs: cada aluno pode retornar JSON diferente.
 import axios from 'axios';
-export const MODO = 'api'; // só troque após a aprovação do professor
+export const MODO = 'api';
 const http = axios.create({
- baseURL: 'http://localhost:3000',
+ baseURL: 'http://localhost:5173',
  timeout: 8000
 });
 export const perfis = {
   tecnico123: {nome: 'Carlos', tipo: 'tecnico'},
   admin123: {nome: 'Administrador', tipo: 'admin'},
+  kauan123: {nome: 'Kauan', tipo: 'admin'},
 };
 const iniciais = [
  {id:1,titulo:'Computador não liga',descricao:'Máquina 12 sem vídeo',setor:'Laboratório',prioridade:'alta',status:'aberto',responsavel:'',data_abertura:'2026-11-02T13:45:00-03:00'},
@@ -21,11 +22,11 @@ const cabecalho = token => ({headers:{Authorization: token}});
 export const servico = {
  async listar(){
   if(MODO === 'api') {
-   const res = await http.get('/chamados');
-// Somente se a resposta REAL for {chamados:[...]}:
-const itens = res.data.chamados;
-if(!Array.isArray(itens)) throw new Error('Esperava uma lista em chamados');
-return itens;
+    const res = await http.get('/chamados');
+    // Somente se a resposta REAL for {chamados:[...]}:
+    const itens = res.data.chamados;
+    if(!Array.isArray(itens)) throw new Error('Esperava uma lista em chamados');
+    return itens;
   }
   return dados.map(x=>({...x}));
  },

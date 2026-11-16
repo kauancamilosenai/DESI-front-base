@@ -4,14 +4,13 @@ import { servico, perfis, MODO } from './api.js';
 
 // PARTE 1: quem entra e quem sai.
 export default function App() {
-  // O texto digitado começa vazio.
+    // O texto digitado começa vazio.
   const [token, setToken] = useState('');
   // null quer dizer: ninguém entrou ainda.
   const [usuario, setUsuario] = useState(null);
   // A mensagem de erro começa vazia.
   const [erro, setErro] = useState('');
-
-  function entrar(e) {
+    function entrar(e) {
     // Não deixe o formulário recarregar a página.
     e.preventDefault();
     // Procure o texto na lista de perfis de estudo.
@@ -26,8 +25,7 @@ export default function App() {
     // Guarde o perfil e o token para as próximas ações.
     setUsuario({ ...perfil, token: token.trim() });
   }
-
-  // Sem usuário, mostre apenas o acesso.
+    // Sem usuário, mostre apenas o acesso.
   if (!usuario)
     return (
       <main className="pagina">
@@ -47,8 +45,7 @@ export default function App() {
         </form>
       </main>
     );
-
-  // Envie o usuário para a parte de trabalho.
+    // Envie o usuário para a parte de trabalho.
   return (
     <Painel
       usuario={usuario}
@@ -64,14 +61,13 @@ export default function App() {
 
 // PARTE 2: lista, busca, cadastro e ações nos chamados.
 function Painel({ usuario, sair }) {
-  // Qual parte do painel está aberta?
+    // Qual parte do painel está aberta?
   const [tela, setTela] = useState('lista');
   // A lista começa sem registros e será preenchida pelo serviço.
   const [lista, setLista] = useState([]);
   // Enquanto uma ação roda, ocupado vale true.
   const [ocupado, setOcupado] = useState(false);
   const [erro, setErro] = useState('');
-
   async function carregar() {
     setOcupado(true); // Avise que começou.
     setErro('');
@@ -88,10 +84,8 @@ function Painel({ usuario, sair }) {
   useEffect(() => {
     carregar();
   }, []);
-
   // Guarde o que a pessoa digitar na busca.
   const [busca, setBusca] = useState('');
-
   // filter escolhe os chamados que contêm o termo.
   const visiveis = lista
     .filter((c) =>
@@ -104,7 +98,6 @@ function Painel({ usuario, sair }) {
         // Mostre primeiro a data de abertura mais antiga.
         new Date(b.data_abertura) - new Date(a.data_abertura),
     );
-
   // Os nomes dos campos são os mesmos do contrato da API.
   const [form, setForm] = useState({
     titulo: '',
@@ -112,7 +105,6 @@ function Painel({ usuario, sair }) {
     setor: '',
     prioridade: 'baixa',
   });
-  
   function formValido() {
     // trim remove os espaços das pontas antes da conferência.
     const faltaTexto =
@@ -125,8 +117,7 @@ function Painel({ usuario, sair }) {
     }
     return true; // Todos os campos obrigatórios têm texto.
   }
-  
-    async function salvar(e) {
+  async function salvar(e) {
     e.preventDefault();
     setErro('');
     if (!formValido()) return; // Não envie campos vazios.
@@ -137,7 +128,7 @@ function Painel({ usuario, sair }) {
         titulo: '',
         descricao: '',
         setor: '',
-        prioridade: 'baixa',
+        prioridade: 'media',
       });
       setBusca(''); // O filtro anterior não deve esconder o cadastro.
       setTela('lista');
@@ -148,11 +139,9 @@ function Painel({ usuario, sair }) {
       setOcupado(false);
     }
   }
-
-  // null: nenhum chamado está esperando confirmação.
+    // null: nenhum chamado está esperando confirmação.
   const [confirmar, setConfirmar] = useState(null);
-
-  async function excluir(c) {
+    async function excluir(c) {
     setConfirmar(null); // Feche a confirmação.
     setOcupado(true);
     setErro('');
@@ -167,7 +156,6 @@ function Painel({ usuario, sair }) {
       setOcupado(false);
     }
   }
-
   async function mudar(tipo, c) {
     setOcupado(true);
     setErro('');
@@ -183,19 +171,16 @@ function Painel({ usuario, sair }) {
       setOcupado(false);
     }
   }
-
   return (
     <main className="pagina">
       <h1>Minha Central de Chamados</h1>
       <p>Modo: {MODO}</p>
-
-      {/* O nome vem do usuário que entrou, não de texto fixo. */}
+            {/* O nome vem do usuário que entrou, não de texto fixo. */}
       <p>
         Boas-vindas, {usuario?.nome}
         <button onClick={sair}>Sair</button>
       </p>
-
-      {/* Estes botões mudam apenas a tela aberta. */}
+            {/* Estes botões mudam apenas a tela aberta. */}
       <nav>
         <button onClick={() => setTela('lista')}>Chamados</button>
         <button onClick={() => setTela('novo')}>
@@ -203,10 +188,8 @@ function Painel({ usuario, sair }) {
         </button>
       </nav>
       <p>Tela: {tela}</p>
-      
       {/* Sem texto de erro, nada aparece aqui. */}
       {erro && <p role="alert">{erro}</p>}
-
       {tela === 'novo' && (
         <form onSubmit={salvar}>
           <h2>Abrir chamado</h2>
@@ -241,7 +224,6 @@ function Painel({ usuario, sair }) {
           <button disabled={ocupado}>Cadastrar</button>
         </form>
       )}
-
       {tela === 'lista' && (
         <label>
           Buscar
@@ -253,8 +235,6 @@ function Painel({ usuario, sair }) {
           />
         </label>
       )}
-
-
       {tela === 'lista' && (
         <section>
           {/* Nenhum resultado não é a mesma coisa que uma falha. */}
@@ -272,7 +252,7 @@ function Painel({ usuario, sair }) {
                     #{c.id} {c.titulo}
                   </h2>
                   <p>
-                    {c.descricao} · Setor: {c.setor} · {c.prioridade}
+                    Descrição: {c.descricao} · Setor: {c.setor} · Prioridade: {c.prioridade}
                   </p>
                   <p>
                     {c.status} ·{' '}
@@ -283,7 +263,7 @@ function Painel({ usuario, sair }) {
                       'pt-BR',
                     )}
                   </p>
-                  {/* Primeiro clique: só abre a confirmação deste ID. */}
+                                    {/* Primeiro clique: só abre a confirmação deste ID. */}
                   <button onClick={() => setConfirmar(c.id)}>
                     Excluir
                   </button>
@@ -301,7 +281,7 @@ function Painel({ usuario, sair }) {
                       </button>
                     </span>
                   )}
-                  {/* Um chamado aberto pode ser assumido. */}
+                                    {/* Um chamado aberto pode ser assumido. */}
                   {c.status === 'aberto' && (
                     <button
                       disabled={ocupado}
